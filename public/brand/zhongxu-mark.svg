@@ -1,0 +1,14 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">中虚书斋标识</title>
+  <desc id="desc">朱砂色藏书章，中字与中心留白构成中虚书斋的专属标识。</desc>
+  <rect x="10" y="10" width="108" height="108" rx="28" fill="#F8E9D2"/>
+  <rect x="12.5" y="12.5" width="103" height="103" rx="25.5" stroke="#9F3F2F" stroke-width="5"/>
+  <rect x="24" y="24" width="80" height="80" rx="18" fill="#B74732"/>
+  <path d="M39 35H89V81H71V94H57V81H39V35ZM52 49V67H76V49H52Z" fill="#FFF6E7"/>
+  <circle cx="64" cy="58" r="6.5" fill="#B74732"/>
+  <circle cx="64" cy="58" r="3.25" fill="#FFF6E7"/>
+  <path d="M31 34C33 31 36 30 40 30" stroke="#FFF1DC" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <path d="M97 96C95 99 92 100 88 100" stroke="#FFF1DC" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <path d="M31 99C28 95 28 91 28 88" stroke="#DFAE80" stroke-width="2" stroke-linecap="round" opacity="0.72"/>
+  <path d="M97 29C100 33 100 37 100 40" stroke="#DFAE80" stroke-width="2" stroke-linecap="round" opacity="0.72"/>
+</svg>

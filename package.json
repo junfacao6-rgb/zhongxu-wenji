@@ -1,0 +1,50 @@
+{
+  "name": "zhongxu-wenji",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -H 127.0.0.1",
+    "dev:lan": "next dev -H 0.0.0.0",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "start:standalone": "node .next/standalone/server.js",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "node --experimental-strip-types prisma/seed.ts",
+    "deploy:check": "npm run build"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "2.8.2",
+    "@emotion/react": "11.11.1",
+    "@emotion/styled": "11.11.0",
+    "@nypl/web-reader": "5.0.3",
+    "@prisma/client": "6.19.0",
+    "autoprefixer": "10.4.22",
+    "framer-motion": "4.1.17",
+    "lucide-react": "0.554.0",
+    "next": "16.2.9",
+    "pdfjs-dist": "4.8.69",
+    "postcss": "8.5.6",
+    "prisma": "6.19.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-pdf": "9.2.1",
+    "swr": "2.2.5",
+    "tailwindcss": "3.4.18",
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.6",
+    "@types/react-dom": "19.2.3"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "canvas"
+    ]
+  }
+}

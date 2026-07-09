@@ -1,0 +1,17 @@
+services:
+  zhongxu-wenji:
+    build: .
+    container_name: zhongxu-wenji
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/prod.db"
+      INVITE_CODE: "${INVITE_CODE:-ZXWJ-TEST}"
+      ADMIN_TOKEN: "${ADMIN_TOKEN:-ZX-ADMIN-TEST}"
+      APP_BASE_URL: "${APP_BASE_URL:-http://localhost:3000}"
+    volumes:
+      - zhongxu_data:/app/data
+
+volumes:
+  zhongxu_data:

@@ -1,0 +1,10 @@
+node_modules
+.next
+.tools
+.npm-cache
+prisma/dev.db
+dev-server.log
+dev-server.err.log
+browser-optimized.png
+*.tsbuildinfo
+.env

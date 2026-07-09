@@ -1,0 +1,706 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Core account record. Existing mock-first pages continue to use local mock data as fallback.
+model User {
+  id        String   @id @default(cuid())
+  nickname  String
+  phone     String?
+  email     String?
+  gender    String?
+  avatarUrl String?  @map("avatar_url")
+  role      String   @default("user")
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  birthProfiles BirthProfile[]
+  memberships   Membership[]
+  dailyLessons  DailyLesson[]
+  dateQueries   DateQuery[]
+  eventQueries  EventQuery[]
+  liuyaoRecords LiuyaoRecord[]
+  bracelets     BraceletRecommendation[]
+  consultations Consultation[]
+
+  createdInviteCodes InviteCode[]      @relation("InviteCodeCreatedBy")
+  sourceDocuments    SourceDocument[]
+  qimenCharts        QimenChart[]
+  qimenReports       QimenReport[]
+  qimenTimingRecords QimenTimingRecord[]
+  userNotes          UserNote[]
+  studyProgress      StudyProgress[]
+  userUploads        UserUpload[]
+  userReports        UserReport[]
+
+  @@map("users")
+}
+
+model Membership {
+  id                 String    @id @default(cuid())
+  userId             String    @map("user_id")
+  planType           String    @default("free") @map("plan_type")
+  status             String    @default("active")
+  startAt            DateTime  @default(now()) @map("start_at")
+  endAt              DateTime? @map("end_at")
+  benefits           Json      @default("[]")
+  sourceInviteCodeId String?   @map("source_invite_code_id")
+  liuyaoQuotaMonthly Int       @default(1) @map("liuyao_quota_monthly")
+  liuyaoQuotaUsed    Int       @default(0) @map("liuyao_quota_used")
+  qimenQuotaMonthly  Int       @default(1) @map("qimen_quota_monthly")
+  reportQuotaMonthly Int       @default(0) @map("report_quota_monthly")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceInviteCode InviteCode? @relation(fields: [sourceInviteCodeId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sourceInviteCodeId])
+  @@map("memberships")
+}
+
+model InviteCode {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  type            String
+  plan            String    @default("member")
+  validDays       Int       @default(7) @map("valid_days")
+  maxUses         Int       @default(1) @map("max_uses")
+  usedCount       Int       @default(0) @map("used_count")
+  status          String    @default("active")
+  expiresAt       DateTime? @map("expires_at")
+  createdByUserId String?   @map("created_by_user_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  createdBy   User?        @relation("InviteCodeCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  memberships Membership[]
+
+  @@index([createdByUserId])
+  @@index([status])
+  @@map("invite_codes")
+}
+
+model Book {
+  id               String   @id @default(cuid())
+  title            String
+  subtitle         String?
+  author           String?
+  dynasty          String?
+  subject          String
+  category         String
+  coverUrl         String?  @map("cover_url")
+  description      String   @db.Text
+  difficulty       String   @default("入门")
+  tags             Json     @default("[]")
+  copyrightStatus  String   @default("private_study") @map("copyright_status")
+  visibility       String   @default("private")
+  sourceDocumentId String?  @map("source_document_id")
+  publishStatus    String   @default("draft") @map("publish_status")
+  reviewStatus     String   @default("pending") @map("review_status")
+  readCount        Int      @default(0) @map("read_count")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  sourceDocument SourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  chapters       Chapter[]
+
+  @@index([subject])
+  @@index([visibility])
+  @@index([sourceDocumentId])
+  @@map("books")
+}
+
+model Chapter {
+  id           String   @id @default(cuid())
+  bookId       String   @map("book_id")
+  title        String
+  order        Int
+  summary      String?  @db.Text
+  segmentIds   Json     @default("[]") @map("segment_ids")
+  visibility   String   @default("private")
+  reviewStatus String   @default("pending") @map("review_status")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, order])
+  @@index([visibility])
+  @@map("chapters")
+}
+
+model SourceDocument {
+  id                  String   @id @default(cuid())
+  title               String
+  subject             String
+  sourceType          String   @default("other") @map("source_type")
+  copyrightStatus     String   @default("private_study") @map("copyright_status")
+  visibility          String   @default("private")
+  ownerUserId         String?  @map("owner_user_id")
+  uploadStatus        String   @default("idle") @map("upload_status")
+  processStatus       String   @default("pending") @map("process_status")
+  extractedTextStatus String   @default("not_started") @map("extracted_text_status")
+  aiDraftStatus       String   @default("not_started") @map("ai_draft_status")
+  reviewStatus        String   @default("pending") @map("review_status")
+  sourceNote          String?  @db.Text @map("source_note")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  owner        User?           @relation(fields: [ownerUserId], references: [id], onDelete: SetNull)
+  files        SourceFile[]
+  segments     SourceSegment[]
+  books        Book[]
+  knowledge    KnowledgeUnit[]
+
+  @@index([subject])
+  @@index([visibility])
+  @@index([copyrightStatus])
+  @@index([ownerUserId])
+  @@map("source_documents")
+}
+
+model SourceFile {
+  id               String   @id @default(cuid())
+  documentId       String   @map("document_id")
+  fileName         String   @map("file_name")
+  fileType         String   @map("file_type")
+  storageKey       String   @map("storage_key")
+  fileUrl          String?  @map("file_url")
+  sizeBytes        Int      @default(0) @map("size_bytes")
+  checksum         String?
+  mimeType         String?  @map("mime_type")
+  uploadedByUserId String?  @map("uploaded_by_user_id")
+  uploadedAt       DateTime @default(now()) @map("uploaded_at")
+
+  document SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  segments SourceSegment[]
+
+  @@index([documentId])
+  @@map("source_files")
+}
+
+model SourceSegment {
+  id                String   @id @default(cuid())
+  documentId        String   @map("document_id")
+  sourceFileId      String?  @map("source_file_id")
+  chapterTitle      String?  @map("chapter_title")
+  pageStart         Int?     @map("page_start")
+  pageEnd           Int?     @map("page_end")
+  order             Int
+  originalText      String   @db.Text @map("original_text")
+  cleanedText       String?  @db.Text @map("cleaned_text")
+  modernTranslation String?  @db.Text @map("modern_translation")
+  notes             Json     @default("[]")
+  tags              Json     @default("[]")
+  evidenceRefs      Json     @default("[]") @map("evidence_refs")
+  reviewStatus      String   @default("pending") @map("review_status")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  document       SourceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  sourceFile     SourceFile?    @relation(fields: [sourceFileId], references: [id], onDelete: SetNull)
+  terms          Term[]
+  knowledgeUnits KnowledgeUnit[]
+  userNotes      UserNote[]
+
+  @@unique([documentId, order])
+  @@index([documentId])
+  @@index([sourceFileId])
+  @@index([reviewStatus])
+  @@map("source_segments")
+}
+
+model Term {
+  id                  String   @id @default(cuid())
+  name                String
+  subject             String
+  category            String
+  aliases             Json     @default("[]")
+  originalExplanation String?  @db.Text @map("original_explanation")
+  plainExplanation    String   @db.Text @map("plain_explanation")
+  advancedExplanation String?  @db.Text @map("advanced_explanation")
+  relatedTermIds      Json     @default("[]") @map("related_term_ids")
+  relatedSources      Json     @default("[]") @map("related_sources")
+  visibility          String   @default("public")
+  reviewStatus        String   @default("pending") @map("review_status")
+  tags                Json     @default("[]")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  sourceSegments SourceSegment[]
+  knowledgeUnits KnowledgeUnit[]
+  lessons        Lesson[]
+  userNotes      UserNote[]
+
+  @@unique([subject, name])
+  @@index([visibility])
+  @@map("terms")
+}
+
+model KnowledgeUnit {
+  id               String   @id @default(cuid())
+  subject          String
+  title            String
+  summary          String   @db.Text
+  level            String   @default("入门")
+  sourceSegmentIds Json     @default("[]") @map("source_segment_ids")
+  termIds          Json     @default("[]") @map("term_ids")
+  lessonIds        Json     @default("[]") @map("lesson_ids")
+  evidenceRefs     Json     @default("[]") @map("evidence_refs")
+  visibility       String   @default("private")
+  reviewStatus     String   @default("pending") @map("review_status")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  sourceDocumentId String?          @map("source_document_id")
+  sourceDocument   SourceDocument?  @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  sourceSegments   SourceSegment[]
+  terms            Term[]
+  lessons          Lesson[]
+
+  @@index([subject])
+  @@index([visibility])
+  @@index([reviewStatus])
+  @@map("knowledge_units")
+}
+
+model Course {
+  id                String   @id @default(cuid())
+  subject           String
+  title             String
+  subtitle          String?
+  description       String   @db.Text
+  difficulty        String   @default("入门")
+  visibility        String   @default("private")
+  publishStatus     String   @default("draft") @map("publish_status")
+  reviewStatus      String   @default("pending") @map("review_status")
+  sourceDocumentIds Json     @default("[]") @map("source_document_ids")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  lessons       Lesson[]
+  progressItems StudyProgress[]
+
+  @@index([subject])
+  @@index([visibility])
+  @@map("courses")
+}
+
+model Lesson {
+  id                String   @id @default(cuid())
+  courseId          String   @map("course_id")
+  moduleId          String?  @map("module_id")
+  subject           String
+  title             String
+  summary           String   @db.Text
+  order             Int
+  estimatedMinutes  Int      @default(10) @map("estimated_minutes")
+  visibility        String   @default("private")
+  publishStatus     String   @default("draft") @map("publish_status")
+  reviewStatus      String   @default("pending") @map("review_status")
+  knowledgeUnitIds  Json     @default("[]") @map("knowledge_unit_ids")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  course         Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  blocks         LessonBlock[]
+  knowledgeUnits KnowledgeUnit[]
+  terms          Term[]
+  notes          UserNote[]
+  progressItems  StudyProgress[]
+
+  @@unique([courseId, order])
+  @@index([visibility])
+  @@map("lessons")
+}
+
+model LessonBlock {
+  id           String   @id @default(cuid())
+  lessonId     String   @map("lesson_id")
+  type         String
+  title        String?
+  body         String?  @db.Text
+  payload      Json     @default("{}")
+  order        Int
+  evidenceRefs Json     @default("[]") @map("evidence_refs")
+  reviewStatus String   @default("pending") @map("review_status")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, order])
+  @@index([reviewStatus])
+  @@map("lesson_blocks")
+}
+
+model QimenChart {
+  id            String   @id @default(cuid())
+  userId        String?  @map("user_id")
+  title         String
+  chartTime     DateTime @map("chart_time")
+  question      String?  @db.Text
+  juType        String   @map("ju_type")
+  juNumber      Int      @map("ju_number")
+  dutyStar      String   @map("duty_star")
+  dutyDoor      String   @map("duty_door")
+  palaces       Json
+  ruleVersion   String   @map("rule_version")
+  inputSnapshot Json     @default("{}") @map("input_snapshot")
+  disclaimer    String   @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user          User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reports       QimenReport[]
+  timingRecords QimenTimingRecord[]
+  notes         UserNote[]
+
+  @@index([userId])
+  @@index([chartTime])
+  @@map("qimen_charts")
+}
+
+model QimenReport {
+  id              String   @id @default(cuid())
+  userId          String?  @map("user_id")
+  chartId         String?  @map("chart_id")
+  timingRecordId  String?  @map("timing_record_id")
+  title           String
+  summary         String   @db.Text
+  sections        Json
+  generationBasis Json     @map("generation_basis")
+  promptSnapshot  String?  @db.Text @map("prompt_snapshot")
+  ruleTrace       Json     @default("[]") @map("rule_trace")
+  visibility      String   @default("private")
+  status          String   @default("draft")
+  reviewStatus    String   @default("pending") @map("review_status")
+  disclaimer      String   @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user         User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  chart        QimenChart?        @relation(fields: [chartId], references: [id], onDelete: SetNull)
+  timingRecord QimenTimingRecord? @relation(fields: [timingRecordId], references: [id], onDelete: SetNull)
+  userReports  UserReport[]
+
+  @@index([userId])
+  @@index([chartId])
+  @@index([timingRecordId])
+  @@index([visibility])
+  @@map("qimen_reports")
+}
+
+model QimenEventRule {
+  id               String   @id @default(cuid())
+  eventType        String   @map("event_type")
+  title            String
+  description      String   @db.Text
+  suitablePatterns Json     @default("[]") @map("suitable_patterns")
+  cautionPatterns  Json     @default("[]") @map("caution_patterns")
+  scoringConfig    Json     @default("{}") @map("scoring_config")
+  evidenceRefs     Json     @default("[]") @map("evidence_refs")
+  version          String   @default("v1")
+  isActive         Boolean  @default(false) @map("is_active")
+  reviewStatus     String   @default("pending") @map("review_status")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  timingRecords QimenTimingRecord[]
+
+  @@index([eventType])
+  @@index([isActive])
+  @@map("qimen_event_rules")
+}
+
+model QimenTimingRecord {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  chartId       String?  @map("chart_id")
+  eventRuleId   String?  @map("event_rule_id")
+  eventType     String   @map("event_type")
+  eventName     String   @map("event_name")
+  targetDate    DateTime @map("target_date")
+  timeRange     String   @map("time_range")
+  suggestedTime String   @map("suggested_time")
+  level         String
+  reasons       Json     @default("[]")
+  cautions      Json     @default("[]")
+  evidenceRefs  Json     @default("[]") @map("evidence_refs")
+  ruleTrace     Json     @default("[]") @map("rule_trace")
+  disclaimer    String   @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chart     QimenChart?      @relation(fields: [chartId], references: [id], onDelete: SetNull)
+  eventRule QimenEventRule?  @relation(fields: [eventRuleId], references: [id], onDelete: SetNull)
+  reports   QimenReport[]
+
+  @@index([userId])
+  @@index([targetDate])
+  @@map("qimen_timing_records")
+}
+
+model UserNote {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  title           String
+  body            String   @db.Text
+  noteType        String   @default("general") @map("note_type")
+  sourceSegmentId String?  @map("source_segment_id")
+  lessonId        String?  @map("lesson_id")
+  termId          String?  @map("term_id")
+  chartId         String?  @map("chart_id")
+  tags            Json     @default("[]")
+  visibility      String   @default("private")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceSegment SourceSegment? @relation(fields: [sourceSegmentId], references: [id], onDelete: SetNull)
+  lesson        Lesson?        @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  term          Term?          @relation(fields: [termId], references: [id], onDelete: SetNull)
+  chart         QimenChart?    @relation(fields: [chartId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([visibility])
+  @@map("user_notes")
+}
+
+model StudyProgress {
+  id                 String   @id @default(cuid())
+  userId             String   @map("user_id")
+  courseId           String?  @map("course_id")
+  moduleId           String?  @map("module_id")
+  lessonId           String?  @map("lesson_id")
+  subject            String?
+  progressPercent    Int      @default(0) @map("progress_percent")
+  completedLessonIds Json     @default("[]") @map("completed_lesson_ids")
+  quizScores         Json     @default("{}") @map("quiz_scores")
+  lastStudiedAt      DateTime @default(now()) @map("last_studied_at")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([lessonId])
+  @@map("study_progress")
+}
+
+model UserUpload {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  title            String
+  fileName         String   @map("file_name")
+  fileType         String   @map("file_type")
+  sourceDocumentId String?  @map("source_document_id")
+  copyrightStatus  String   @default("private_study") @map("copyright_status")
+  visibility       String   @default("private")
+  uploadStatus     String   @default("idle") @map("upload_status")
+  processStatus    String   @default("pending") @map("process_status")
+  note             String?  @db.Text
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sourceDocumentId])
+  @@map("user_uploads")
+}
+
+model UserReport {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  title           String
+  reportType      String   @map("report_type")
+  status          String   @default("draft")
+  visibility      String   @default("private")
+  reportId        String?  @map("report_id")
+  summary         String?  @db.Text
+  generationBasis Json     @map("generation_basis")
+  evidenceRefs    Json     @default("[]") @map("evidence_refs")
+  reviewStatus    String   @default("pending") @map("review_status")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  qimenReport QimenReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([reportId])
+  @@index([visibility])
+  @@map("user_reports")
+}
+
+// Existing MVP tables retained for compatibility with current API routes.
+
+model BirthProfile {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  name          String
+  gender        String
+  birthDate     DateTime @map("birth_date")
+  birthTime     String   @map("birth_time")
+  birthTimezone String   @default("Asia/Shanghai") @map("birth_timezone")
+  birthPlace    String?  @map("birth_place")
+  calendarType  String   @default("solar") @map("calendar_type")
+  yearPillar    String   @map("year_pillar")
+  monthPillar   String   @map("month_pillar")
+  dayPillar     String   @map("day_pillar")
+  hourPillar    String   @map("hour_pillar")
+  dayMaster     String   @map("day_master")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("birth_profiles")
+}
+
+model DailyLesson {
+  id                 String   @id @default(cuid())
+  userId             String   @map("user_id")
+  profileId          String   @map("profile_id")
+  lessonDate         DateTime @map("lesson_date")
+  dayGanzhi          String   @map("day_ganzhi")
+  keyword            String
+  summary            String   @db.Text
+  suitable           String
+  unsuitable         String
+  careerAdvice       String   @db.Text @map("career_advice")
+  moneyAdvice        String   @db.Text @map("money_advice")
+  emotionAdvice      String   @db.Text @map("emotion_advice")
+  relationshipAdvice String   @db.Text @map("relationship_advice")
+  contentAdvice      String   @db.Text @map("content_advice")
+  luckyColor         String   @map("lucky_color")
+  suitableDirection  String   @map("suitable_direction")
+  suitableTimeRange  String   @map("suitable_time_range")
+  oneSentence        String   @map("one_sentence")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("daily_lessons")
+}
+
+model DateQuery {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  profileId    String   @map("profile_id")
+  targetDate   DateTime @map("target_date")
+  targetGanzhi String   @map("target_ganzhi")
+  keyword      String
+  summary      String   @db.Text
+  suitable     String
+  unsuitable   String
+  timeAdvice   String   @db.Text @map("time_advice")
+  eventAdvice  String   @db.Text @map("event_advice")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("date_queries")
+}
+
+model EventQuery {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  profileId        String   @map("profile_id")
+  targetDate       DateTime @map("target_date")
+  eventType        String   @map("event_type")
+  eventName        String   @map("event_name")
+  suitabilityLevel String   @map("suitability_level")
+  reason           String   @db.Text
+  actionAdvice     String   @db.Text @map("action_advice")
+  caution          String   @db.Text
+  recommendedTime  String   @map("recommended_time")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("event_queries")
+}
+
+model LiuyaoRecord {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  questionType     String   @map("question_type")
+  questionText     String   @db.Text @map("question_text")
+  method           String
+  baseHexagram     String   @map("base_hexagram")
+  changedHexagram  String   @map("changed_hexagram")
+  movingLines      String   @map("moving_lines")
+  resultSummary    String   @db.Text @map("result_summary")
+  opportunity      String   @db.Text
+  obstacle         String   @db.Text
+  actionAdvice     String   @db.Text @map("action_advice")
+  isLostItem       Boolean  @default(false) @map("is_lost_item")
+  lostItemName     String?  @map("lost_item_name")
+  lostItemLastSeen String?  @map("lost_item_last_seen")
+  lostItemHint     String?  @map("lost_item_hint")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("liuyao_records")
+}
+
+model BraceletRecommendation {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  profileId       String   @map("profile_id")
+  dayPillar       String   @map("day_pillar")
+  braceletName    String   @map("bracelet_name")
+  keywords        String
+  description     String   @db.Text
+  productImageUrl String?  @map("product_image_url")
+  productLink     String?  @map("product_link")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("bracelet_recommendations")
+}
+
+model Consultation {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  consultationType String   @map("consultation_type")
+  price            Int
+  status           String   @default("display")
+  remark           String?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("consultations")
+}
+
+model AdminLog {
+  id         String   @id @default(cuid())
+  adminId    String   @map("admin_id")
+  action     String
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("admin_logs")
+}
