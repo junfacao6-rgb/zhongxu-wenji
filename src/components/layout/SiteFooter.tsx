@@ -3,13 +3,9 @@ import BrandMark from "@/components/site/BrandMark";
 import { wenguBrand } from "@/lib/wengu-library";
 
 const footerLinks = [
-  { label: "首页", href: "/" },
-  { label: "藏书", href: "/library" },
-  { label: "学科", href: "/subjects" },
-  { label: "奇门工具", href: "/qimen" },
-  { label: "术语库", href: "/terms" },
-  { label: "课程", href: "/courses" },
-  { label: "我的书斋", href: "/me" },
+  { label: "阅读古籍", href: "/library" },
+  { label: "奇门模块", href: "/qimen" },
+  { label: "大六壬金口诀", href: "/jinkoujue" },
 ];
 
 export default function SiteFooter() {
@@ -24,7 +20,7 @@ export default function SiteFooter() {
           </div>
         </div>
         <div className="platform-footer-copy">
-          <p>以古籍为根，以讲义为桥，以工具为用，整理传统文化资料、术语、课程、笔记和报告。</p>
+          <p>前台只保留古籍阅读、奇门参考与金口诀三个入口，避免把学习、管理和草稿功能堆给普通用户。</p>
           <small>© {new Date().getFullYear()} · 问古书斋</small>
         </div>
         <div className="platform-footer-nav-group">

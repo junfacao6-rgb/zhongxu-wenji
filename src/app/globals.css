@@ -31645,3 +31645,702 @@ body:has(.demo-page) {
     min-width: 4.45rem;
   }
 }
+
+/* Three-function frontstage: refined public surface for reading, Qimen, and Jin Kou Jue. */
+body:has(.trinity-home),
+body:has(.jinkou-page) {
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 12rem, rgba(164, 67, 46, 0.055), transparent 20rem),
+    radial-gradient(circle at 88% 18rem, rgba(66, 108, 91, 0.085), transparent 22rem),
+    linear-gradient(180deg, #fbf5e7 0%, #f4ead7 52%, #fffaf0 100%);
+}
+
+body:has(.trinity-home) .platform-header-inner,
+body:has(.jinkou-page) .platform-header-inner {
+  width: min(100% - 2rem, 1180px);
+}
+
+.trinity-nav {
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.platform-nav a.is-jinkou,
+.platform-mobile-nav a.is-jinkou {
+  color: #6d4b2f;
+}
+
+.platform-nav a.is-jinkou:hover,
+.platform-nav a.is-jinkou.is-active,
+.platform-mobile-nav a.is-jinkou:hover,
+.platform-mobile-nav a.is-jinkou.is-active {
+  border-color: rgba(66, 108, 91, 0.24);
+  background: rgba(66, 108, 91, 0.1);
+  color: #2f6b59;
+}
+
+.platform-nav a.is-jinkou.is-active::after,
+.platform-mobile-nav a.is-jinkou.is-active::after {
+  background: #2f6b59;
+}
+
+.trinity-home {
+  min-height: 100vh;
+  color: #332316;
+}
+
+.trinity-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(139, 106, 76, 0.18);
+  background: #ead8b7;
+}
+
+.trinity-hero-art {
+  height: 17rem;
+  overflow: hidden;
+}
+
+.trinity-hero-art img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 48%;
+  filter: saturate(0.94) contrast(0.98) brightness(1.02);
+}
+
+.trinity-hero-content {
+  width: min(100% - 2rem, 1180px);
+  margin: -3.5rem auto 0;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(139, 106, 76, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(139, 106, 76, 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(139, 106, 76, 0.04) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 252, 243, 0.96), rgba(246, 235, 212, 0.92));
+  background-size: 2.25rem 2.25rem, 2.25rem 2.25rem, auto;
+  box-shadow: 0 22px 55px rgba(72, 47, 24, 0.12);
+  padding: 1.8rem;
+}
+
+.trinity-kicker,
+.jinkou-hero-copy > span,
+.trinity-feature-copy > span,
+.trinity-reading-strip span,
+.jinkou-input-panel > span,
+.jinkou-notes span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  color: #9f3f2f;
+  font-size: 0.78rem;
+  font-weight: 780;
+}
+
+.trinity-hero h1 {
+  max-width: 42rem;
+  margin: 0.55rem 0 0;
+  color: #2e2115;
+  font-family: var(--font-brand);
+  font-size: 2.85rem;
+  font-weight: 780;
+  line-height: 1.12;
+}
+
+.trinity-hero-content > p:not(.trinity-kicker) {
+  max-width: 42rem;
+  margin: 0.9rem 0 0;
+  color: rgba(58, 42, 27, 0.74);
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.trinity-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.68rem;
+  margin-top: 1.25rem;
+}
+
+.trinity-hero-actions a,
+.jinkou-actions a,
+.jinkou-actions button {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  border: 1px solid rgba(51, 35, 22, 0.16);
+  border-radius: 6px;
+  background: #2d2118;
+  color: #fff7e8;
+  font-size: 0.92rem;
+  font-weight: 760;
+  padding: 0 0.92rem;
+}
+
+.trinity-hero-actions a.is-secondary,
+.jinkou-actions a:not(:first-child) {
+  background: rgba(255, 252, 243, 0.76);
+  color: #4a3524;
+}
+
+.trinity-hero-actions svg,
+.jinkou-actions svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.trinity-main,
+.jinkou-page {
+  display: grid;
+  gap: 1rem;
+  width: min(100% - 2rem, 1180px);
+  margin: 1rem auto 0;
+  padding-bottom: 3rem;
+}
+
+.trinity-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.trinity-feature-card {
+  display: grid;
+  min-height: 25rem;
+  overflow: hidden;
+  border: 1px solid rgba(139, 106, 76, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 250, 238, 0.88);
+  box-shadow: 0 18px 42px rgba(72, 47, 24, 0.09);
+}
+
+.trinity-feature-card:hover,
+.trinity-feature-card:focus-visible {
+  border-color: rgba(159, 63, 47, 0.28);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.trinity-feature-image {
+  height: 11rem;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid rgba(139, 106, 76, 0.12);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.5), transparent 7rem),
+    #efe1c7;
+}
+
+.trinity-feature-image img {
+  width: 7rem;
+  height: 7rem;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(72, 47, 24, 0.16));
+}
+
+.trinity-feature-card.is-library .trinity-feature-image img {
+  width: 5.7rem;
+  height: 8.5rem;
+  object-fit: cover;
+  border: 1px solid rgba(51, 35, 22, 0.18);
+  border-radius: 4px;
+}
+
+.trinity-feature-card.is-qimen {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 238, 0.9), rgba(239, 225, 199, 0.72)),
+    #fbf5e7;
+}
+
+.trinity-feature-card.is-jinkou {
+  background:
+    linear-gradient(180deg, rgba(250, 253, 246, 0.9), rgba(230, 239, 226, 0.68)),
+    #f8f6e9;
+}
+
+.trinity-feature-copy {
+  display: grid;
+  align-content: start;
+  gap: 0.56rem;
+  padding: 1rem;
+}
+
+.trinity-feature-copy h2 {
+  margin: 0;
+  color: #2e2115;
+  font-family: var(--font-brand);
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
+
+.trinity-feature-copy p {
+  margin: 0;
+  color: rgba(58, 42, 27, 0.68);
+  font-size: 0.94rem;
+  line-height: 1.78;
+}
+
+.trinity-feature-copy strong {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.35rem;
+  align-items: center;
+  gap: 0.36rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid rgba(139, 106, 76, 0.18);
+  color: #7c5635;
+  font-size: 0.9rem;
+  padding-top: 0.65rem;
+}
+
+.trinity-feature-copy strong svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.trinity-reading-strip,
+.trinity-boundary,
+.jinkou-hero,
+.jinkou-workbench,
+.jinkou-notes {
+  border: 1px solid rgba(139, 106, 76, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 250, 238, 0.86);
+  box-shadow: 0 14px 34px rgba(72, 47, 24, 0.07);
+}
+
+.trinity-reading-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+}
+
+.trinity-reading-strip h2 {
+  margin: 0.35rem 0 0;
+  color: #2e2115;
+  font-family: var(--font-brand);
+  font-size: 1.45rem;
+}
+
+.trinity-book-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.trinity-book-row a {
+  display: grid;
+  grid-template-columns: 3.3rem minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  border: 1px solid rgba(139, 106, 76, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 252, 243, 0.76);
+  padding: 0.5rem;
+}
+
+.trinity-book-row img {
+  width: 3.3rem;
+  height: 4.6rem;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.trinity-book-row strong {
+  color: #3b2919;
+  font-size: 0.92rem;
+}
+
+.trinity-boundary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.95rem 1rem;
+  color: rgba(58, 42, 27, 0.68);
+}
+
+.trinity-boundary svg {
+  color: #2f6b59;
+}
+
+.trinity-boundary p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.78;
+}
+
+.jinkou-page {
+  color: #302317;
+}
+
+.jinkou-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr);
+  gap: 1rem;
+  align-items: stretch;
+  overflow: hidden;
+  margin-top: 1rem;
+  background:
+    linear-gradient(90deg, rgba(66, 108, 91, 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(139, 106, 76, 0.045) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 252, 243, 0.96), rgba(233, 239, 225, 0.9));
+  background-size: 2.4rem 2.4rem, 2.4rem 2.4rem, auto;
+  padding: 1.4rem;
+}
+
+.jinkou-hero-copy {
+  display: grid;
+  align-content: center;
+}
+
+.jinkou-hero h1 {
+  margin: 0.5rem 0 0;
+  color: #263c31;
+  font-family: var(--font-brand);
+  font-size: 2.6rem;
+  line-height: 1.12;
+}
+
+.jinkou-hero p {
+  max-width: 42rem;
+  margin: 0.85rem 0 0;
+  color: rgba(48, 35, 23, 0.72);
+  line-height: 1.86;
+}
+
+.jinkou-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+}
+
+.jinkou-actions a:first-child {
+  background: #2f6b59;
+}
+
+.jinkou-hero-card {
+  display: grid;
+  place-items: center;
+  min-height: 17rem;
+  border: 1px solid rgba(66, 108, 91, 0.18);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.62), transparent 8rem),
+    rgba(255, 252, 243, 0.72);
+  padding: 1rem;
+  text-align: center;
+}
+
+.jinkou-hero-card img {
+  width: 7.2rem;
+  height: 7.2rem;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 24px rgba(47, 107, 89, 0.16));
+}
+
+.jinkou-hero-card strong {
+  display: block;
+  margin-top: 0.9rem;
+  color: #263c31;
+  font-family: var(--font-brand);
+  font-size: 1.35rem;
+}
+
+.jinkou-hero-card span {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgba(48, 35, 23, 0.62);
+  font-size: 0.88rem;
+}
+
+.jinkou-workbench {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.72fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.jinkou-input-panel {
+  display: grid;
+  align-content: start;
+  border: 1px solid rgba(139, 106, 76, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 252, 243, 0.68);
+  padding: 1rem;
+}
+
+.jinkou-input-panel h2 {
+  margin: 0.75rem 0 0;
+  color: #2e2115;
+  font-family: var(--font-brand);
+  font-size: 1.4rem;
+}
+
+.jinkou-input-panel p {
+  margin: 0.5rem 0 0;
+  color: rgba(48, 35, 23, 0.66);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.jinkou-input-panel button {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.45rem;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  border: 0;
+  border-radius: 6px;
+  background: #2f6b59;
+  color: #fffaf0;
+  font-weight: 760;
+  padding: 0 0.85rem;
+}
+
+.jinkou-input-panel button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.jinkou-lesson-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.jinkou-lesson-board article {
+  min-height: 9rem;
+  border: 1px solid rgba(66, 108, 91, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 243, 0.76), rgba(230, 239, 226, 0.58));
+  padding: 0.85rem;
+}
+
+.jinkou-lesson-board small {
+  color: #2f6b59;
+  font-weight: 780;
+}
+
+.jinkou-lesson-board strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: #263c31;
+  font-family: var(--font-brand);
+  font-size: 1.85rem;
+}
+
+.jinkou-lesson-board span {
+  display: block;
+  margin-top: 0.45rem;
+  color: rgba(48, 35, 23, 0.62);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.jinkou-result-list {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.jinkou-result-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  border: 1px solid rgba(139, 106, 76, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 252, 243, 0.66);
+  padding: 0.8rem;
+}
+
+.jinkou-result-list svg {
+  margin-top: 0.15rem;
+  color: #2f6b59;
+}
+
+.jinkou-result-list h3 {
+  margin: 0;
+  color: #2e2115;
+  font-family: var(--font-brand);
+  font-size: 1.05rem;
+}
+
+.jinkou-result-list p {
+  margin: 0.35rem 0 0;
+  color: rgba(48, 35, 23, 0.66);
+  font-size: 0.88rem;
+  line-height: 1.68;
+}
+
+.jinkou-notes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.65fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.jinkou-notes ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.7rem 0 0;
+  padding-left: 1.2rem;
+  color: rgba(48, 35, 23, 0.72);
+  line-height: 1.72;
+}
+
+.jinkou-disclaimer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+  border: 1px solid rgba(159, 63, 47, 0.18);
+  border-radius: 8px;
+  background: rgba(253, 237, 225, 0.66);
+  color: #9f3f2f;
+  padding: 0.85rem;
+}
+
+.jinkou-disclaimer p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.72;
+}
+
+@media (max-width: 1180px) {
+  .trinity-mobile-nav {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 880px) {
+  .trinity-feature-grid,
+  .trinity-reading-strip,
+  .jinkou-hero,
+  .jinkou-workbench,
+  .jinkou-notes,
+  .jinkou-result-list {
+    grid-template-columns: 1fr;
+  }
+
+  .jinkou-lesson-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  body:has(.trinity-home) .platform-header-inner,
+  body:has(.jinkou-page) .platform-header-inner {
+    width: calc(100% - 1rem);
+  }
+
+  .trinity-hero-art {
+    height: 10.4rem;
+  }
+
+  .trinity-hero-content,
+  .trinity-main,
+  .jinkou-page {
+    width: min(100% - 1rem, 30rem);
+  }
+
+  .trinity-hero-content {
+    margin-top: -1.8rem;
+    padding: 1.05rem;
+  }
+
+  .trinity-hero h1,
+  .jinkou-hero h1 {
+    font-size: 1.95rem;
+    line-height: 1.16;
+  }
+
+  .trinity-hero-content > p:not(.trinity-kicker),
+  .jinkou-hero p {
+    font-size: 0.9rem;
+    line-height: 1.78;
+  }
+
+  .trinity-hero-actions,
+  .jinkou-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .trinity-feature-card {
+    min-height: 0;
+  }
+
+  .trinity-feature-image {
+    height: 8rem;
+  }
+
+  .trinity-feature-image img {
+    width: 5.4rem;
+    height: 5.4rem;
+  }
+
+  .trinity-feature-card.is-library .trinity-feature-image img {
+    width: 4.4rem;
+    height: 6.4rem;
+  }
+
+  .trinity-feature-copy {
+    padding: 0.9rem;
+  }
+
+  .trinity-feature-copy h2,
+  .trinity-reading-strip h2 {
+    font-size: 1.28rem;
+  }
+
+  .trinity-feature-copy p,
+  .trinity-boundary p {
+    font-size: 0.86rem;
+    line-height: 1.68;
+  }
+
+  .trinity-book-row {
+    grid-template-columns: 1fr;
+  }
+
+  .jinkou-hero,
+  .jinkou-workbench,
+  .jinkou-notes {
+    padding: 0.9rem;
+  }
+
+  .jinkou-hero-card {
+    min-height: 12rem;
+  }
+
+  .jinkou-hero-card img {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .jinkou-lesson-board {
+    gap: 0.5rem;
+  }
+
+  .jinkou-lesson-board article {
+    min-height: 7.5rem;
+    padding: 0.72rem;
+  }
+
+  .jinkou-lesson-board strong {
+    font-size: 1.45rem;
+  }
+}

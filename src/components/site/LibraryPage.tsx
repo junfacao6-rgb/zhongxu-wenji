@@ -1,13 +1,12 @@
 "use client";
 
-import { ChevronRight, Search, ShieldAlert, X } from "lucide-react";
+import { ChevronRight, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import BookCard from "@/components/library/BookCard";
 import BookFilters, { type DifficultyFilterValue, type SubjectFilterValue } from "@/components/library/BookFilters";
 import RecentReading from "@/components/library/RecentReading";
 import { platformMockBooks } from "@/data/books";
-import { newUploadCategoryIntake } from "@/data/sourceIntakeMock";
 import { siteContent } from "@/lib/site-content";
 import { readWenguReadingRecords, type WenguReadingRecord } from "@/lib/wengu-reading-progress";
 
@@ -17,16 +16,19 @@ const subjectEntrances: {
   subtitle: string;
   image: string;
 }[] = [
-  { label: "奇门古籍", value: "qimen", subtitle: "九宫八门", image: "/images/wengu/categories/qimen.webp" },
-  { label: "八字古籍", value: "bazi", subtitle: "格局用神", image: "/images/wengu/categories/bazi.webp" },
-  { label: "六爻古籍", value: "liuyao", subtitle: "问事取象", image: "/images/wengu/categories/liuyao.webp" },
-  { label: "梅花易数", value: "meihua", subtitle: "体用触机", image: "/images/wengu/categories/meihua.webp" },
+  { label: "奇门古籍", value: "qimen", subtitle: "奇门遁甲", image: "/images/wengu/categories/qimen.webp" },
+  { label: "八字古籍", value: "bazi", subtitle: "命理源流", image: "/images/wengu/categories/bazi.webp" },
+  { label: "六爻古籍", value: "liuyao", subtitle: "断事明理", image: "/images/wengu/categories/liuyao.webp" },
+  { label: "梅花易数", value: "meihua", subtitle: "心易占断", image: "/images/wengu/categories/meihua.webp" },
   { label: "道家经典", value: "dao", subtitle: "修身明理", image: "/images/wengu/categories/daoist.webp" },
   { label: "易学基础", value: "yixue", subtitle: "阴阳干支", image: "/images/wengu/categories/other.webp" },
 ];
 
+const subjectValues = subjectEntrances.map((item) => item.value);
+const difficultyValues: DifficultyFilterValue[] = ["入门", "进阶", "专业", "原典"];
+
 export default function LibraryPage() {
-  const books = platformMockBooks;
+  const books = useMemo(() => platformMockBooks.filter((book) => book.visibility === "public"), []);
   const [query, setQuery] = useState("");
   const [activeSubject, setActiveSubject] = useState<SubjectFilterValue>("all");
   const [activeDifficulty, setActiveDifficulty] = useState<DifficultyFilterValue>("all");
@@ -37,10 +39,10 @@ export default function LibraryPage() {
     const subject = params.get("subject") as SubjectFilterValue | null;
     const difficulty = params.get("difficulty") as DifficultyFilterValue | null;
 
-    if (subject && ["qimen", "bazi", "liuyao", "meihua", "dao", "yixue"].includes(subject)) {
+    if (subject && subjectValues.includes(subject as Exclude<SubjectFilterValue, "all">)) {
       setActiveSubject(subject);
     }
-    if (difficulty && ["入门", "进阶", "专业", "原典"].includes(difficulty)) {
+    if (difficulty && difficultyValues.includes(difficulty)) {
       setActiveDifficulty(difficulty);
     }
 
@@ -93,8 +95,6 @@ export default function LibraryPage() {
       ? `/library/${latestRecord.bookId}/source`
       : `/library/${latestRecord.bookId}/read?chapter=${latestRecord.chapterIndex + 1}`
     : "";
-  const publicCount = books.filter((book) => book.visibility === "public").length;
-  const privateCount = books.length - publicCount;
 
   return (
     <section className="wen-gu-page wen-gu-library-page library-platform-page library-archive-page">
@@ -105,22 +105,22 @@ export default function LibraryPage() {
       <main className="library-archive-main">
         <header className="wen-gu-library-head library-platform-head library-archive-head">
           <div className="library-archive-intro">
-            <p className="wen-gu-eyebrow">藏书阁</p>
-            <h1>按门类寻书，循原典入学</h1>
-            <span>以传统术数与道家经典为主线整理馆藏，按版权边界、学科、难度和关键词进入阅读。</span>
+            <p className="wen-gu-eyebrow">阅读古籍</p>
+            <h1>公开古籍，安静阅读</h1>
+            <span>前台只展示已经整理为公开阅读的书目；未授权资料、导入草稿和审核队列不在这里出现。</span>
 
             <div className="library-archive-ledger" aria-label="馆藏统计">
               <span>
                 <strong>{books.length}</strong>
-                <small>馆藏条目</small>
+                <small>公开书目</small>
               </span>
               <span>
-                <strong>{publicCount}</strong>
-                <small>公开可读</small>
+                <strong>{subjectEntrances.length}</strong>
+                <small>古籍门类</small>
               </span>
               <span>
-                <strong>{privateCount}</strong>
-                <small>后台资料</small>
+                <strong>3</strong>
+                <small>前台功能</small>
               </span>
             </div>
 
@@ -168,39 +168,7 @@ export default function LibraryPage() {
               </button>
             ) : null}
           </label>
-          <p>未授权资料默认不公开全文，私密资料仅后台可见。</p>
-        </section>
-
-        <section className="wen-gu-section library-intake-section" aria-label="新入库资料分类索引">
-          <div className="wen-gu-section-head">
-            <div>
-              <p>新入库</p>
-              <h2>上传资料分类索引</h2>
-            </div>
-            <span>仅展示分类，不公开全文</span>
-          </div>
-          <div className="library-intake-warning">
-            <ShieldAlert aria-hidden="true" />
-            <p>本批资料默认 `private_study / private / pending`。扫描 PDF 需要 OCR，现代出版物与敏感资料只进入后台学习草稿。</p>
-          </div>
-          <div className="library-intake-grid">
-            {newUploadCategoryIntake.map((category) => (
-              <article key={category.id} className={`library-intake-card is-${category.status}`}>
-                <div>
-                  <span>{category.fileCount} 份</span>
-                  <strong>{category.title}</strong>
-                  <small>{category.sizeLabel}</small>
-                </div>
-                <p>{category.summary}</p>
-                <ul>
-                  {category.representativeTitles.map((title) => (
-                    <li key={title}>{title}</li>
-                  ))}
-                </ul>
-                <em>{category.publicNote}</em>
-              </article>
-            ))}
-          </div>
+          <p>只展示公开可读书目；私有资料留在后台审核。</p>
         </section>
 
         <BookFilters
@@ -217,7 +185,7 @@ export default function LibraryPage() {
             <div className="wen-gu-section-head library-book-section-head">
               <div>
                 <p>目录</p>
-                <h2>全部藏书</h2>
+                <h2>公开书架</h2>
               </div>
               <span>{visibleBooks.length ? `当前显示 ${visibleBooks.length} 本` : "暂无匹配结果"}</span>
             </div>
