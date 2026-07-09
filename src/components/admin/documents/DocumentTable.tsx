@@ -131,6 +131,7 @@ export default function DocumentTable({ documents }: DocumentTableProps) {
                 <th>版权状态</th>
                 <th>可见性</th>
                 <th>上传状态</th>
+                <th>处理状态</th>
                 <th>抽取状态</th>
                 <th>AI 草稿状态</th>
                 <th>创建时间</th>
@@ -149,6 +150,7 @@ export default function DocumentTable({ documents }: DocumentTableProps) {
                   <td><DocumentStatusBadge value={document.copyrightStatus} /></td>
                   <td><DocumentStatusBadge value={document.visibility} /></td>
                   <td><DocumentStatusBadge value={document.uploadStatus} /></td>
+                  <td><DocumentStatusBadge value={document.processStatus} /></td>
                   <td><DocumentStatusBadge value={document.extractedTextStatus} /></td>
                   <td><DocumentStatusBadge value={document.aiDraftStatus} /></td>
                   <td>{formatDate(document.updatedAt)}</td>

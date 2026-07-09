@@ -44,6 +44,7 @@ export default function SegmentReviewTable({ segments }: SegmentReviewTableProps
                   <th>清洗文本</th>
                   <th>白话翻译</th>
                   <th>注解</th>
+                  <th>证据</th>
                   <th>相关术语</th>
                   <th>审核状态</th>
                   <th>操作</th>
@@ -67,6 +68,13 @@ export default function SegmentReviewTable({ segments }: SegmentReviewTableProps
                           <li key={note}>{note}</li>
                         ))}
                       </ul>
+                    </td>
+                    <td>
+                      <small>
+                        {segment.evidenceRefs?.length
+                          ? `${segment.evidenceRefs.length} 条 evidenceRefs`
+                          : "待补证据"}
+                      </small>
                     </td>
                     <td>
                       <div className="segment-term-list">

@@ -44,6 +44,17 @@ export default function SegmentEditor({ segment }: SegmentEditorProps) {
         </ul>
       </section>
 
+      {segment.keyPoints?.length ? (
+        <section>
+          <span>要点草稿</span>
+          <ul>
+            {segment.keyPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section>
         <span>相关术语</span>
         <div className="segment-term-list">
@@ -52,6 +63,47 @@ export default function SegmentEditor({ segment }: SegmentEditorProps) {
           ))}
         </div>
       </section>
+
+      {segment.possibleLessons?.length ? (
+        <section>
+          <span>可转课程</span>
+          <ul>
+            {segment.possibleLessons.map((lesson) => (
+              <li key={lesson}>{lesson}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {segment.quizDrafts?.length ? (
+        <section>
+          <span>测验草稿</span>
+          <ul>
+            {segment.quizDrafts.map((quiz) => (
+              <li key={quiz.question}>
+                <strong>{quiz.question}</strong>
+                <small>{quiz.answer}</small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {segment.evidenceRefs?.length ? (
+        <section>
+          <span>evidenceRefs</span>
+          <ul>
+            {segment.evidenceRefs.map((ref) => (
+              <li key={`${ref.documentId}-${ref.segmentId}`}>
+                <strong>{ref.documentId}</strong>
+                <small>
+                  第 {ref.pageStart}-{ref.pageEnd} 页 · {ref.chapterTitle} · {ref.originalText}
+                </small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <footer>
         <button type="button">

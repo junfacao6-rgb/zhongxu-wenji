@@ -1,4 +1,10 @@
 import type { AiDraftStatus, CopyrightStatus, ExtractedTextStatus, ProcessStatus, ReviewStatus, SourceFileType, SubjectKey, UploadStatus, Visibility } from "@/types/platform";
+import {
+  newUploadImportPipelineMocks,
+  newUploadReviewMocks,
+  newUploadSegmentMocks,
+  newUploadSourceMocks,
+} from "@/data/sourceIntakeMock";
 
 export interface AdminSourceMock {
   id: string;
@@ -70,11 +76,27 @@ export interface AdminSegmentMock {
   cleanedText: string;
   modernTranslation: string;
   notes: string[];
+  keyPoints?: string[];
   relatedTerms: string[];
+  possibleLessons?: string[];
+  quizDrafts?: Array<{
+    question: string;
+    answer: string;
+  }>;
+  evidenceRefs?: AdminSegmentEvidenceRef[];
   reviewStatus: ReviewStatus;
 }
 
-export const adminSourceMocks: AdminSourceMock[] = [
+export interface AdminSegmentEvidenceRef {
+  documentId: string;
+  segmentId: string;
+  pageStart: number;
+  pageEnd: number;
+  chapterTitle: string;
+  originalText: string;
+}
+
+const baseAdminSourceMocks: AdminSourceMock[] = [
   {
     id: "source-qimen-upload-1",
     title: "奇门讲义第一讲",
@@ -137,7 +159,9 @@ export const adminSourceMocks: AdminSourceMock[] = [
   },
 ];
 
-export const adminReviewMocks: AdminReviewMock[] = [
+export const adminSourceMocks: AdminSourceMock[] = [...baseAdminSourceMocks, ...newUploadSourceMocks];
+
+const baseAdminReviewMocks: AdminReviewMock[] = [
   {
     id: "review-qimen-upload-1",
     sourceId: "source-qimen-upload-1",
@@ -163,6 +187,8 @@ export const adminReviewMocks: AdminReviewMock[] = [
     ],
   },
 ];
+
+export const adminReviewMocks: AdminReviewMock[] = [...baseAdminReviewMocks, ...newUploadReviewMocks];
 
 const pipelineStepLabels: Array<Pick<AdminImportStepMock, "key" | "label">> = [
   { key: "uploaded", label: "已上传" },
@@ -205,7 +231,7 @@ function getPipelineStepDescription(step: AdminImportStepMock["key"], status: Im
   return descriptionMap[step];
 }
 
-export const adminImportPipelineMocks: AdminImportPipelineMock[] = [
+const baseAdminImportPipelineMocks: AdminImportPipelineMock[] = [
   {
     id: "import-qimen-upload-1",
     sourceId: "source-qimen-upload-1",
@@ -256,7 +282,9 @@ export const adminImportPipelineMocks: AdminImportPipelineMock[] = [
   },
 ];
 
-export const adminSegmentMocks: AdminSegmentMock[] = [
+export const adminImportPipelineMocks: AdminImportPipelineMock[] = [...baseAdminImportPipelineMocks, ...newUploadImportPipelineMocks];
+
+const baseAdminSegmentMocks: AdminSegmentMock[] = [
   {
     id: "segment-qimen-001",
     documentId: "source-qimen-upload-1",
@@ -323,3 +351,5 @@ export const adminSegmentMocks: AdminSegmentMock[] = [
     reviewStatus: "rejected",
   },
 ];
+
+export const adminSegmentMocks: AdminSegmentMock[] = [...baseAdminSegmentMocks, ...newUploadSegmentMocks];

@@ -18,3 +18,13 @@ reference-haoqi
 reference-open-source
 
 .vercel
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+
+!.env.example

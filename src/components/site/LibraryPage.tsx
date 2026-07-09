@@ -1,12 +1,13 @@
 "use client";
 
-import { ChevronRight, Search, X } from "lucide-react";
+import { ChevronRight, Search, ShieldAlert, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import BookCard from "@/components/library/BookCard";
 import BookFilters, { type DifficultyFilterValue, type SubjectFilterValue } from "@/components/library/BookFilters";
 import RecentReading from "@/components/library/RecentReading";
 import { platformMockBooks } from "@/data/books";
+import { newUploadCategoryIntake } from "@/data/sourceIntakeMock";
 import { siteContent } from "@/lib/site-content";
 import { readWenguReadingRecords, type WenguReadingRecord } from "@/lib/wengu-reading-progress";
 
@@ -168,6 +169,38 @@ export default function LibraryPage() {
             ) : null}
           </label>
           <p>未授权资料默认不公开全文，私密资料仅后台可见。</p>
+        </section>
+
+        <section className="wen-gu-section library-intake-section" aria-label="新入库资料分类索引">
+          <div className="wen-gu-section-head">
+            <div>
+              <p>新入库</p>
+              <h2>上传资料分类索引</h2>
+            </div>
+            <span>仅展示分类，不公开全文</span>
+          </div>
+          <div className="library-intake-warning">
+            <ShieldAlert aria-hidden="true" />
+            <p>本批资料默认 `private_study / private / pending`。扫描 PDF 需要 OCR，现代出版物与敏感资料只进入后台学习草稿。</p>
+          </div>
+          <div className="library-intake-grid">
+            {newUploadCategoryIntake.map((category) => (
+              <article key={category.id} className={`library-intake-card is-${category.status}`}>
+                <div>
+                  <span>{category.fileCount} 份</span>
+                  <strong>{category.title}</strong>
+                  <small>{category.sizeLabel}</small>
+                </div>
+                <p>{category.summary}</p>
+                <ul>
+                  {category.representativeTitles.map((title) => (
+                    <li key={title}>{title}</li>
+                  ))}
+                </ul>
+                <em>{category.publicNote}</em>
+              </article>
+            ))}
+          </div>
         </section>
 
         <BookFilters

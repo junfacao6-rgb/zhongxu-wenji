@@ -1,0 +1,488 @@
+import type {
+  AdminImportPipelineMock,
+  AdminImportStepMock,
+  AdminReviewMock,
+  AdminSegmentEvidenceRef,
+  AdminSegmentMock,
+  AdminSourceMock,
+} from "@/data/adminMock";
+
+type IntakeCategoryStatus = "ready_draft" | "needs_ocr" | "review_only";
+
+export interface NewUploadCategoryIntake {
+  id: string;
+  title: string;
+  summary: string;
+  fileCount: number;
+  sizeLabel: string;
+  representativeTitles: string[];
+  status: IntakeCategoryStatus;
+  publicNote: string;
+}
+
+const intakeTime = "2026-07-09T00:00:00.000Z";
+
+const stepText: Record<AdminImportStepMock["key"], string> = {
+  uploaded: "资料已登记为私有学习资料。",
+  text_extracted: "仅 TXT 样本完成 mock 抽取；扫描 PDF 保持待 OCR。",
+  cleaned: "只对可抽取文本生成清洗草稿。",
+  chaptered: "目录和章节为初步识别，等待人工校对。",
+  translated: "白话稿仅根据原文短摘生成，不新增盘外信息。",
+  terms_extracted: "术语进入后台候选，不写入公开术语库。",
+  course_drafted: "课程草稿只作为后台学习草稿。",
+  reviewing: "等待管理员确认版权、版本、OCR 和文本质量。",
+  published: "本批资料不自动发布。",
+};
+
+function buildIntakeSteps(doneCount: number, activeIndex: number | null, blockedIndex: number | null = null): AdminImportStepMock[] {
+  const labels: Array<Pick<AdminImportStepMock, "key" | "label">> = [
+    { key: "uploaded", label: "已上传" },
+    { key: "text_extracted", label: "已抽取文本" },
+    { key: "cleaned", label: "已清洗" },
+    { key: "chaptered", label: "已分章" },
+    { key: "translated", label: "已生成白话" },
+    { key: "terms_extracted", label: "已提取术语" },
+    { key: "course_drafted", label: "已生成课程草稿" },
+    { key: "reviewing", label: "待审核" },
+    { key: "published", label: "已发布" },
+  ];
+
+  return labels.map((step, index) => ({
+    ...step,
+    status: blockedIndex === index ? "blocked" : index < doneCount ? "done" : activeIndex === index ? "active" : "pending",
+    description: blockedIndex === index ? "扫描件或授权风险未处理，不能继续生成草稿。" : stepText[step.key],
+  }));
+}
+
+function evidence(documentId: string, segmentId: string, chapterTitle: string, originalText: string): AdminSegmentEvidenceRef[] {
+  return [
+    {
+      documentId,
+      segmentId,
+      pageStart: 1,
+      pageEnd: 1,
+      chapterTitle,
+      originalText,
+    },
+  ];
+}
+
+export const newUploadCategoryIntake: NewUploadCategoryIntake[] = [
+  {
+    id: "intake-cat-liuyao",
+    title: "八卦六爻",
+    summary: "以《黄金策》等卜筮古籍为代表，PDF 多为影印扫描，先建私有索引。",
+    fileCount: 64,
+    sizeLabel: "约 1.04 GB",
+    representativeTitles: ["《黄金策》", "《火珠林》", "《蔔易秘訣-海底眼》"],
+    status: "needs_ocr",
+    publicNote: "网页仅展示分类入口，全文需 OCR 与版权复核后再决定。",
+  },
+  {
+    id: "intake-cat-qimen",
+    title: "奇门古籍",
+    summary: "包含《御定奇门真诠》《金函玉镜奇门遁甲秘笈全书》等影印资料。",
+    fileCount: 97,
+    sizeLabel: "约 985.8 MB",
+    representativeTitles: ["《御定奇门真诠》", "《金函玉镜奇门遁甲秘笈全书》"],
+    status: "needs_ocr",
+    publicNote: "暂不开放底本，仅保留奇门古籍分类线索。",
+  },
+  {
+    id: "intake-cat-mingli",
+    title: "命理与术数 TXT",
+    summary: "TXT 中《三命通会》《五行大义》《乙巳占》可做后台草稿样本。",
+    fileCount: 155,
+    sizeLabel: "约 28.39 MB",
+    representativeTitles: ["《三命通会》", "《五行大义》", "《乙巳占》"],
+    status: "ready_draft",
+    publicNote: "可见分类和书名，不公开新上传全文。",
+  },
+  {
+    id: "intake-cat-yijing",
+    title: "易经 TXT",
+    summary: "包含《京氏易传》等易学文本，适合做术语与章节草稿。",
+    fileCount: 186,
+    sizeLabel: "约 68.71 MB",
+    representativeTitles: ["《京氏易传》", "《三易备遗》", "《东坡易传》"],
+    status: "ready_draft",
+    publicNote: "先进入后台审核，不进入公开阅读器。",
+  },
+  {
+    id: "intake-cat-sensitive",
+    title: "符咒巫蛊与现代出版物",
+    summary: "存在敏感术法、现代出版物和大体量扫描件，默认只作私有学习索引。",
+    fileCount: 78,
+    sizeLabel: "约 1.53 GB",
+    representativeTitles: ["《秘传紫微》", "符咒类影印件", "图解类现代出版物"],
+    status: "review_only",
+    publicNote: "不公开全文，不生成操作性指导。",
+  },
+];
+
+export const newUploadSourceMocks: AdminSourceMock[] = [
+  {
+    id: "source-upload-liuyao-huangjin-ce-pdf",
+    title: "黄金策影印本",
+    subject: "liuyao",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-qimen-yuding-pdf",
+    title: "御定奇门真诠影印本",
+    subject: "qimen",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-kanyu-dili-wujue-pdf",
+    title: "地理五诀影印本",
+    subject: "yixue",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-liuren-jingyun-pdf",
+    title: "六壬精蕴影印本",
+    subject: "yixue",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-bazi-yuanhai-pdf",
+    title: "渊海子平影印本",
+    subject: "bazi",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-xuanze-xieji-pdf",
+    title: "协纪辨方书影印本",
+    subject: "yixue",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-ziwei-michuan-pdf",
+    title: "秘传紫微影印本",
+    subject: "yixue",
+    fileType: "pdf",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "pending",
+    extractedTextStatus: "needs_ocr",
+    aiDraftStatus: "not_started",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-txt-sanming",
+    title: "三命通会 TXT",
+    subject: "bazi",
+    fileType: "txt",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "ready",
+    extractedTextStatus: "ready",
+    aiDraftStatus: "mock_ready",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-txt-wuxing-dayi",
+    title: "五行大义 TXT",
+    subject: "yixue",
+    fileType: "txt",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "ready",
+    extractedTextStatus: "ready",
+    aiDraftStatus: "mock_ready",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-txt-yisi-zhan",
+    title: "乙巳占 TXT",
+    subject: "yixue",
+    fileType: "txt",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "ready",
+    extractedTextStatus: "ready",
+    aiDraftStatus: "mock_ready",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-txt-jingshi-yizhuan",
+    title: "京氏易传 TXT",
+    subject: "yixue",
+    fileType: "txt",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "ready",
+    extractedTextStatus: "ready",
+    aiDraftStatus: "mock_ready",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+  {
+    id: "source-upload-txt-dadan-zhizhi",
+    title: "邱祖秘传大丹直指 TXT",
+    subject: "dao",
+    fileType: "txt",
+    copyrightStatus: "private_study",
+    visibility: "private",
+    uploadStatus: "uploaded",
+    processStatus: "ready",
+    extractedTextStatus: "ready",
+    aiDraftStatus: "needs_review",
+    reviewStatus: "pending",
+    owner: "管理员",
+    updatedAt: intakeTime,
+  },
+];
+
+export const newUploadImportPipelineMocks: AdminImportPipelineMock[] = newUploadSourceMocks.map((source) => {
+  const isReadyText = source.extractedTextStatus === "ready";
+
+  return {
+    id: `import-${source.id.replace("source-", "")}`,
+    sourceId: source.id,
+    title: source.title,
+    subject: source.subject,
+    copyrightStatus: source.copyrightStatus,
+    visibility: source.visibility,
+    owner: source.owner,
+    updatedAt: source.updatedAt,
+    riskNote: isReadyText
+      ? "已生成后台草稿，但仍保持 private；需人工核对版本、断句、术语与课程化边界。"
+      : "扫描 PDF 前 3 页未抽到有效文字，已标记 needs_ocr；不得假装抽取成功。",
+    steps: isReadyText ? buildIntakeSteps(7, 7) : buildIntakeSteps(1, null, 1),
+  };
+});
+
+export const newUploadSegmentMocks: AdminSegmentMock[] = [
+  {
+    id: "segment-upload-sanming-001",
+    documentId: "source-upload-txt-sanming",
+    documentTitle: "三命通会 TXT",
+    pageLabel: "TXT 起始段",
+    chapterTitle: "四库提要与卷一总论",
+    originalText: "钦定四库全书 子部七 三命通会 术数类五【命书相书之属】提要。",
+    cleanedText: "《三命通会》在四库提要中归入子部术数类，文本说明其为命书相书之属。",
+    modernTranslation: "这一段先说明资料的书名、分类和版本来源，可作为命理古籍入库时的题名与版本证据。",
+    notes: ["TXT 可抽取，但需要人工校对断句。", "当前只进入后台草稿，不公开新上传全文。"],
+    keyPoints: ["题名为《三命通会》", "四库分类为术数类", "适合先做版本和目录索引"],
+    relatedTerms: ["三命通会", "子平", "术数类", "四库提要"],
+    possibleLessons: ["命理古籍如何先看提要", "八字资料入库的版本识别"],
+    quizDrafts: [
+      {
+        question: "这段材料优先用于建立哪类后台信息？",
+        answer: "优先用于建立书名、版本、分类和目录索引。",
+      },
+    ],
+    evidenceRefs: evidence(
+      "source-upload-txt-sanming",
+      "segment-upload-sanming-001",
+      "四库提要与卷一总论",
+      "钦定四库全书 子部七 三命通会 术数类五【命书相书之属】提要。",
+    ),
+    reviewStatus: "pending",
+  },
+  {
+    id: "segment-upload-wuxing-001",
+    documentId: "source-upload-txt-wuxing-dayi",
+    documentTitle: "五行大义 TXT",
+    pageLabel: "TXT 起始段",
+    chapterTitle: "序与五行总义",
+    originalText: "《五行大义》 (隋)萧吉。夫五行者，盖造化之根源，人伦之资始。",
+    cleanedText: "《五行大义》题为隋萧吉撰，开篇说明五行是理解造化、人伦和象数秩序的基础概念。",
+    modernTranslation: "这一段适合整理为易学基础课的概念入口：先讲五行的定义，再讲它如何关联象数与时令。",
+    notes: ["可抽取文本质量较好。", "涉及五行义理，适合进入术语候选。"],
+    keyPoints: ["五行作为基础概念", "文本题署为隋萧吉", "适合拆为术语和入门课程"],
+    relatedTerms: ["五行", "阴阳", "象数", "时令"],
+    possibleLessons: ["五行概念的古籍源流", "从原文拆术语卡片"],
+    quizDrafts: [
+      {
+        question: "这段中最适合作为术语卡的核心词是什么？",
+        answer: "五行。",
+      },
+    ],
+    evidenceRefs: evidence(
+      "source-upload-txt-wuxing-dayi",
+      "segment-upload-wuxing-001",
+      "序与五行总义",
+      "《五行大义》 (隋)萧吉。夫五行者，盖造化之根源，人伦之资始。",
+    ),
+    reviewStatus: "pending",
+  },
+  {
+    id: "segment-upload-yisi-001",
+    documentId: "source-upload-txt-yisi-zhan",
+    documentTitle: "乙巳占 TXT",
+    pageLabel: "TXT 目录段",
+    chapterTitle: "目录与天象分卷",
+    originalText: "《乙巳占》 [唐]李淳风。目录：卷第一，天象第一，天数第二，天占第三。",
+    cleanedText: "《乙巳占》题署唐李淳风，目录从天象、天数、天占等条目开始组织。",
+    modernTranslation: "这份资料更适合作为天文占候类古籍的目录索引，暂不生成现实预测或操作建议。",
+    notes: ["目录可抽取，正文仍需分卷校对。", "占候类内容必须保持历史文献口径。"],
+    keyPoints: ["题署李淳风", "目录以天象占候为主", "适合做短摘索引"],
+    relatedTerms: ["乙巳占", "天象", "占候", "李淳风"],
+    possibleLessons: ["占候古籍如何做历史文献索引", "目录抽取与章节切分"],
+    quizDrafts: [
+      {
+        question: "《乙巳占》这段目录显示它首先围绕什么展开？",
+        answer: "围绕天象、天数、天占等占候条目展开。",
+      },
+    ],
+    evidenceRefs: evidence(
+      "source-upload-txt-yisi-zhan",
+      "segment-upload-yisi-001",
+      "目录与天象分卷",
+      "《乙巳占》 [唐]李淳风。目录：卷第一，天象第一，天数第二，天占第三。",
+    ),
+    reviewStatus: "needs_review",
+  },
+  {
+    id: "segment-upload-jingshi-001",
+    documentId: "source-upload-txt-jingshi-yizhuan",
+    documentTitle: "京氏易传 TXT",
+    pageLabel: "TXT 起始段",
+    chapterTitle: "乾卦纳甲",
+    originalText: "钦定四库全书 京氏易传 汉 京房 撰。乾上乾下，乾：纯阳用事。",
+    cleanedText: "《京氏易传》题署汉京房撰，起始段从乾卦、纯阳、纳甲位置等内容展开。",
+    modernTranslation: "这段适合做易学与纳甲关系的基础索引，但需要校对括注、符号和异体字。",
+    notes: ["括注较多，后续要拆出原文与校注。", "可关联易学基础与六爻纳甲术语。"],
+    keyPoints: ["题名为《京氏易传》", "起始讲乾卦", "可关联纳甲术语"],
+    relatedTerms: ["京氏易传", "乾卦", "纳甲", "飞伏"],
+    possibleLessons: ["乾卦与纳甲的文本入口", "易传文本的括注拆分"],
+    quizDrafts: [
+      {
+        question: "这段材料可关联哪两个核心术语？",
+        answer: "乾卦与纳甲。",
+      },
+    ],
+    evidenceRefs: evidence(
+      "source-upload-txt-jingshi-yizhuan",
+      "segment-upload-jingshi-001",
+      "乾卦纳甲",
+      "钦定四库全书 京氏易传 汉 京房 撰。乾上乾下，乾：纯阳用事。",
+    ),
+    reviewStatus: "pending",
+  },
+  {
+    id: "segment-upload-dadan-001",
+    documentId: "source-upload-txt-dadan-zhizhi",
+    documentTitle: "邱祖秘传大丹直指 TXT",
+    pageLabel: "TXT 起始段",
+    chapterTitle: "三宝三要",
+    originalText: "邱祖秘传大丹直指。一、论三宝三要。修炼有三宝三要。",
+    cleanedText: "该 TXT 起始段以“三宝三要”为题，属于丹道文献中的修炼术语说明。",
+    modernTranslation: "这类资料只能作为历史文献和术语索引处理，不应生成具体修炼、医疗或身体实践指导。",
+    notes: ["丹道资料需人工确认版本和安全边界。", "不得生成操作性修炼建议。"],
+    keyPoints: ["丹道文献", "包含三宝三要术语", "需要安全边界审核"],
+    relatedTerms: ["丹道", "三宝", "三要", "修炼文献"],
+    possibleLessons: ["丹道文献的术语索引", "敏感资料的非操作性整理"],
+    quizDrafts: [
+      {
+        question: "这类资料在后台生成内容时必须避免什么？",
+        answer: "避免生成具体修炼、医疗或身体实践指导。",
+      },
+    ],
+    evidenceRefs: evidence(
+      "source-upload-txt-dadan-zhizhi",
+      "segment-upload-dadan-001",
+      "三宝三要",
+      "邱祖秘传大丹直指。一、论三宝三要。修炼有三宝三要。",
+    ),
+    reviewStatus: "needs_review",
+  },
+];
+
+export const newUploadReviewMocks: AdminReviewMock[] = [
+  {
+    id: "review-new-upload-ocr",
+    sourceId: "source-upload-qimen-yuding-pdf",
+    title: "扫描 PDF OCR 审核",
+    reviewStatus: "pending",
+    riskLevel: "medium",
+    checklist: [
+      { label: "文本抽取", ok: false, note: "代表性 PDF 前 3 页未抽到有效文字，需 OCR。" },
+      { label: "版权范围", ok: true, note: "当前均保持 private_study / private。" },
+      { label: "公开状态", ok: true, note: "未进入公开阅读器。" },
+    ],
+  },
+  {
+    id: "review-new-upload-sensitive",
+    sourceId: "source-upload-txt-dadan-zhizhi",
+    title: "丹道与敏感资料审核",
+    reviewStatus: "needs_review",
+    riskLevel: "high",
+    checklist: [
+      { label: "操作性内容", ok: false, note: "不得生成具体修炼、医疗或身体实践指导。" },
+      { label: "课程草稿", ok: true, note: "仅可做历史文献、术语和短摘索引。" },
+      { label: "人工校对", ok: false, note: "需要人工校对实体字、断句和版本来源。" },
+    ],
+  },
+];
