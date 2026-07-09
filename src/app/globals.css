@@ -31076,3 +31076,572 @@ body:has(.demo-page) {
     font-size: 1.15rem;
   }
 }
+
+/* Mobile demo polish: keep the public share pages compact and presentation-ready. */
+@media (max-width: 640px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .site-main {
+    padding-bottom: 0;
+  }
+
+  .platform-header {
+    min-height: 4rem;
+  }
+
+  .platform-header-inner,
+  body:has(.museum-replica-home) .platform-header-inner,
+  body:has(.library-archive-page) .platform-header-inner,
+  body:has(.qimen-gate-page) .platform-header-inner {
+    width: calc(100% - 1rem);
+    min-height: 4rem;
+  }
+
+  .platform-brand {
+    min-width: 0;
+    gap: 0.6rem;
+    padding-right: 2.8rem;
+  }
+
+  .platform-brand strong {
+    display: block;
+    max-width: 9rem;
+    overflow: hidden;
+    font-size: 1.08rem;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .platform-brand small {
+    display: block;
+    max-width: 10.5rem;
+    overflow: hidden;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .platform-brand-seal {
+    width: 2.25rem;
+    height: 2.55rem;
+  }
+
+  .platform-floating-menu-button,
+  .platform-inline-menu-button,
+  .platform-menu-button-mobile {
+    width: 2.55rem;
+    min-width: 2.55rem;
+    height: 2.55rem;
+    border-radius: 999px;
+  }
+
+  .platform-mobile-panel {
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+    padding: 0.7rem;
+  }
+
+  .platform-mobile-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .platform-mobile-nav a {
+    min-height: 2.4rem;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding-inline: 0.5rem;
+    text-align: center;
+  }
+
+  .platform-search-mobile {
+    min-height: 2.55rem;
+  }
+
+  .platform-footer {
+    margin-top: 1.8rem;
+    padding: 1rem 0.9rem;
+  }
+
+  .platform-footer-brand p {
+    font-size: 1.08rem;
+  }
+
+  .platform-footer-links {
+    gap: 0.42rem 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  .museum-replica-scroll,
+  .library-archive-scroll {
+    height: 9.7rem;
+  }
+
+  .museum-replica-main,
+  .library-archive-main {
+    width: min(100% - 1rem, 30rem);
+  }
+
+  .museum-replica-main::before,
+  .museum-replica-main::after {
+    display: none;
+  }
+
+  .museum-replica-intro-row,
+  .museum-replica-library,
+  .library-archive-head,
+  .library-archive-toolbar,
+  .library-archive-filter-panel,
+  .library-archive-layout {
+    gap: 0.72rem;
+    padding-inline: 0;
+  }
+
+  .museum-replica-intro-row {
+    min-height: 0;
+    padding-top: 1rem;
+  }
+
+  .museum-replica-intro {
+    padding: 0 0 0 0.75rem;
+  }
+
+  .museum-replica-intro h1,
+  .library-archive-intro h1 {
+    max-width: 100%;
+    font-size: 1.7rem;
+    line-height: 1.18;
+    white-space: normal;
+  }
+
+  .museum-replica-intro p,
+  .library-archive-intro > span {
+    max-width: 100%;
+    font-size: 0.92rem;
+    line-height: 1.75;
+  }
+
+  .museum-replica-intro a {
+    min-height: 2.45rem;
+    margin-top: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .museum-replica-categories,
+  .museum-replica-book-list,
+  .library-archive-category-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .museum-replica-category,
+  .library-archive-category-board button {
+    min-height: 7.8rem;
+    padding: 0.68rem 0.45rem;
+  }
+
+  .museum-replica-category img,
+  .library-archive-category-board img {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .museum-replica-category strong,
+  .library-archive-category-board strong {
+    margin-top: 0.45rem;
+    font-size: 1rem;
+    line-height: 1.22;
+  }
+
+  .museum-replica-category span,
+  .museum-replica-category small,
+  .library-archive-category-board span,
+  .library-archive-category-board small {
+    font-size: 0.76rem;
+    line-height: 1.32;
+  }
+
+  .museum-replica-section-head {
+    margin-bottom: 0.62rem;
+  }
+
+  .museum-replica-section-head h2 {
+    font-size: 1.18rem;
+  }
+
+  .museum-replica-section-head a {
+    font-size: 0.8rem;
+  }
+
+  .museum-replica-book {
+    grid-template-columns: 4.7rem minmax(0, 1fr);
+    gap: 0.62rem;
+    min-height: 0;
+    padding: 0.62rem;
+  }
+
+  .museum-replica-book-cover {
+    width: 4.7rem;
+    height: 7.65rem;
+  }
+
+  .museum-replica-book-copy {
+    gap: 0.25rem;
+  }
+
+  .museum-replica-book-copy h3 {
+    font-size: 0.94rem;
+    line-height: 1.28;
+  }
+
+  .museum-replica-book-copy p {
+    -webkit-line-clamp: 2;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .museum-replica-book-copy span,
+  .museum-replica-book-copy small {
+    font-size: 0.74rem;
+  }
+
+  .museum-replica-book-copy > a {
+    min-height: 2rem;
+    justify-self: start;
+    margin-top: 0.18rem;
+    font-size: 0.76rem;
+    padding-inline: 0.58rem;
+  }
+
+  .museum-replica-recent,
+  .museum-replica-ribbon,
+  .museum-replica-compliance {
+    padding: 0.85rem;
+  }
+
+  .museum-replica-recent-item {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.55rem;
+  }
+
+  .museum-replica-ribbon {
+    grid-template-columns: 1fr;
+  }
+
+  .museum-replica-plum,
+  .museum-replica-seal {
+    display: none;
+  }
+
+  .library-archive-head {
+    padding-top: 0.9rem;
+  }
+
+  .library-archive-ledger {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.42rem;
+  }
+
+  .library-archive-ledger span {
+    min-height: 4rem;
+    padding: 0.52rem 0.35rem;
+  }
+
+  .library-archive-ledger strong {
+    font-size: 1.16rem;
+  }
+
+  .library-archive-ledger small {
+    font-size: 0.68rem;
+  }
+
+  .library-archive-continue {
+    grid-template-columns: 1fr auto;
+    gap: 0.35rem;
+    padding: 0.72rem;
+  }
+
+  .library-archive-continue strong {
+    grid-column: 1 / -1;
+  }
+
+  .library-archive-toolbar {
+    grid-template-columns: 1fr;
+    padding: 0.72rem;
+  }
+
+  .library-intake-section,
+  .library-archive-filter-panel,
+  .library-archive-book-section,
+  .library-recent-reading {
+    padding: 0.82rem;
+  }
+
+  .library-intake-grid,
+  .library-book-grid {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+  }
+
+  .library-archive-filter-panel .library-filter-head {
+    align-items: start;
+  }
+
+  .library-archive-filter-panel .library-filter-group {
+    gap: 0.42rem;
+  }
+
+  .library-archive-filter-panel .library-filter-group div {
+    gap: 0.35rem;
+  }
+
+  .library-archive-filter-panel .library-filter-group button {
+    min-height: 2rem;
+    font-size: 0.74rem;
+    padding-inline: 0.58rem;
+  }
+
+  .library-book-card {
+    grid-template-columns: 5.4rem minmax(0, 1fr);
+    gap: 0.7rem;
+    padding: 0.72rem;
+  }
+
+  .library-book-card .library-book-cover {
+    width: 5.4rem;
+    min-width: 5.4rem;
+  }
+
+  .library-book-card h3 {
+    font-size: 1rem;
+    line-height: 1.32;
+  }
+
+  .library-book-description {
+    -webkit-line-clamp: 2;
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+
+  .library-book-footer {
+    gap: 0.38rem;
+  }
+
+  .library-detail-link,
+  .library-private-action {
+    min-height: 2rem;
+    font-size: 0.74rem;
+    padding-inline: 0.55rem;
+  }
+
+  .courses-page {
+    width: min(100% - 1rem, 30rem);
+    gap: 0.75rem;
+    padding-top: 0.8rem;
+  }
+
+  .courses-index-hero,
+  .course-filter-panel,
+  .course-card {
+    padding: 0.95rem;
+  }
+
+  .courses-index-hero h1 {
+    font-size: 1.75rem;
+    line-height: 1.18;
+  }
+
+  .courses-index-hero p,
+  .course-card-copy p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+
+  .course-filter-panel > div > div {
+    gap: 0.34rem;
+  }
+
+  .course-filter-panel a {
+    min-height: 2rem;
+    font-size: 0.74rem;
+    padding-inline: 0.55rem;
+  }
+
+  .course-card {
+    gap: 0.78rem;
+  }
+
+  .course-card-head {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .course-card-copy h2 {
+    font-size: 1.15rem;
+  }
+
+  .course-card-meta {
+    gap: 0.45rem;
+  }
+
+  .course-card-meta div {
+    padding: 0.55rem;
+  }
+
+  .course-card > a {
+    width: 100%;
+    min-height: 2.55rem;
+  }
+
+  .qimen-gate-scroll {
+    height: 7.6rem;
+  }
+
+  .qimen-gate-scroll-mark {
+    right: 0.8rem;
+    bottom: 0.65rem;
+  }
+
+  .qimen-gate-scroll-mark span {
+    font-size: 1.45rem;
+  }
+
+  .qimen-gate-scroll-mark small {
+    font-size: 0.72rem;
+  }
+
+  .qimen-gate-page .qimen-hero,
+  .qimen-gate-page .qimen-section,
+  .qimen-gate-page .qimen-compliance {
+    width: min(100% - 1rem, 30rem);
+    padding: 0.9rem;
+  }
+
+  .qimen-gate-page .qimen-hero {
+    gap: 0.9rem;
+    margin-top: 0.8rem;
+  }
+
+  .qimen-gate-page .qimen-hero h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .qimen-gate-page .qimen-hero-slogan {
+    font-size: 0.96rem;
+    line-height: 1.55;
+  }
+
+  .qimen-gate-page .qimen-hero-copy > p:not(.qimen-hero-slogan),
+  .qimen-gate-page .qimen-section-head p,
+  .qimen-gate-page .qimen-compliance p {
+    font-size: 0.85rem;
+    line-height: 1.72;
+  }
+
+  .qimen-hero-ledger {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .qimen-hero-ledger div {
+    min-height: 3.7rem;
+    padding: 0.58rem;
+  }
+
+  .qimen-gate-page .qimen-hero-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+  }
+
+  .qimen-gate-page .qimen-hero-actions a {
+    min-height: 2.35rem;
+    font-size: 0.8rem;
+    padding-inline: 0.62rem;
+  }
+
+  .qimen-gate-page .qimen-nine-grid > div {
+    min-height: 4rem;
+    padding: 0.42rem 0.22rem;
+  }
+
+  .qimen-gate-page .qimen-nine-grid strong {
+    font-size: 1rem;
+  }
+
+  .qimen-gate-page .qimen-nine-grid span,
+  .qimen-gate-page .qimen-nine-grid small {
+    font-size: 0.68rem;
+  }
+
+  .qimen-gate-page .qimen-section-head h2 {
+    font-size: 1.36rem;
+  }
+
+  .qimen-gate-page .qimen-tool-grid,
+  .qimen-gate-page .qimen-learning-grid {
+    grid-template-columns: 1fr;
+    gap: 0.68rem;
+  }
+
+  .qimen-gate-page .qimen-tool-card {
+    min-height: 0;
+    padding: 0.82rem;
+  }
+
+  .qimen-gate-page .qimen-tool-card h2 {
+    font-size: 1.08rem;
+  }
+
+  .qimen-gate-page .qimen-tool-card p {
+    font-size: 0.84rem;
+    line-height: 1.65;
+  }
+
+  .invite-page {
+    gap: 1rem;
+    max-width: 30rem;
+    padding: 1.2rem 1rem 2rem;
+  }
+
+  .invite-page h1 {
+    font-size: 1.9rem;
+    line-height: 1.18;
+  }
+
+  .invite-page h2 {
+    line-height: 1.25;
+  }
+
+  .invite-page input,
+  .invite-page button {
+    min-height: 2.85rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .museum-replica-categories,
+  .museum-replica-book-list,
+  .library-archive-category-board {
+    grid-template-columns: 1fr;
+  }
+
+  .museum-replica-book,
+  .library-book-card {
+    grid-template-columns: 4.45rem minmax(0, 1fr);
+  }
+
+  .museum-replica-book-cover {
+    width: 4.45rem;
+    height: 7.2rem;
+  }
+
+  .library-book-card .library-book-cover {
+    width: 4.45rem;
+    min-width: 4.45rem;
+  }
+}
